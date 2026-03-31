@@ -26,7 +26,7 @@ subprojects {
     project.evaluationDependsOn(':app')
     
     // Fix for older plugins missing namespace under AGP 8.0+
-    afterEvaluate { project ->
+    def bindNamespace = { project ->
         if (project.hasProperty('android')) {
             project.android {
                 if (namespace == null) {
@@ -34,6 +34,12 @@ subprojects {
                 }
             }
         }
+    }
+    
+    if (project.state.executed) {
+        bindNamespace(project)
+    } else {
+        project.afterEvaluate(bindNamespace)
     }
 }
 
