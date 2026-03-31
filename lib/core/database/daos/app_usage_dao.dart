@@ -43,6 +43,6 @@ class AppUsageDao extends DatabaseAccessor<AppDatabase>
   /// Total screen time in ms for today
   Future<int> getTodayTotalMs() async {
     final rows = await getTodayUsage();
-    return rows.fold(0, (sum, r) => sum + r.usageTimeMs);
+    return rows.fold<int>(0, (sum, r) => sum + r.usageTimeMs);
   }
 }

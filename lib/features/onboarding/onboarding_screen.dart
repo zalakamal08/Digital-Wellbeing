@@ -26,7 +26,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Future<void> _checkExistingPermissions() async {
     final phone = await Permission.phone.isGranted;
-    final sms = await Permission.SMS.isGranted;
+    final sms = await Permission.sms.isGranted;
     final notif = await Permission.notification.isGranted;
     if (mounted) {
       setState(() {
@@ -45,7 +45,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final statuses = await PermissionManager.requestAllPermissions();
     setState(() {
       _phoneGranted = statuses[Permission.phone]?.isGranted ?? false;
-      _smsGranted = statuses[Permission.SMS]?.isGranted ?? false;
+      _smsGranted = statuses[Permission.sms]?.isGranted ?? false;
       _notifGranted = statuses[Permission.notification]?.isGranted ?? false;
     });
   }

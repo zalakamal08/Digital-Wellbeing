@@ -17,7 +17,7 @@ class PermissionManager {
   }
 
   static Future<bool> hasSmsPermission() async {
-    return Permission.SMS.isGranted;
+    return Permission.sms.isGranted;
   }
 
   static Future<bool> hasNotificationPermission() async {
@@ -28,7 +28,7 @@ class PermissionManager {
   static Future<Map<Permission, PermissionStatus>> requestAllPermissions() async {
     return await [
       Permission.phone,
-      Permission.SMS,
+      Permission.sms,
       Permission.notification,
       Permission.contacts,
     ].request();
@@ -40,7 +40,7 @@ class PermissionManager {
 
   static Future<bool> areAllPermissionsGranted() async {
     final phone = await Permission.phone.isGranted;
-    final sms = await Permission.SMS.isGranted;
+    final sms = await Permission.sms.isGranted;
     final notification = await Permission.notification.isGranted;
     return phone && sms && notification;
   }

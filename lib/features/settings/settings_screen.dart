@@ -42,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _checkPermissions() async {
     final phone = await Permission.phone.isGranted;
-    final sms = await Permission.SMS.isGranted;
+    final sms = await Permission.sms.isGranted;
     final notif = await Permission.notification.isGranted;
     setState(() {
       _phoneGranted = phone;

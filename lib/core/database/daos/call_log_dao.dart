@@ -30,6 +30,6 @@ class CallLogDao extends DatabaseAccessor<AppDatabase>
 
   Future<int> getTodayTotalDuration() async {
     final calls = await getTodayCalls();
-    return calls.fold(0, (sum, c) => sum + c.duration);
+    return calls.fold<int>(0, (sum, c) => sum + c.duration);
   }
 }
