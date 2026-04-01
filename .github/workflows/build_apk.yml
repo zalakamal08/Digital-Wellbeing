@@ -35,15 +35,51 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      # 5. Run Drift code generation
+      # 5. Generate launcher PNG icons for all mipmap densities (pre-API 26 fallback)
+      - name: Generate launcher icons
+        run: |
+          python3 - <<'EOF'
+          import os, struct, zlib
+
+          def create_png(size, color=(63, 81, 181)):
+              r, g, b = color
+              def chunk(name, data):
+                  c = name + data
+                  return struct.pack('>I', len(data)) + c + struct.pack('>I', zlib.crc32(c) & 0xffffffff)
+              sig = b'\x89PNG\r\n\x1a\n'
+              ihdr = chunk(b'IHDR', struct.pack('>IIBBBBB', size, size, 8, 2, 0, 0, 0))
+              raw = b''.join(b'\x00' + bytes([r, g, b] * size) for _ in range(size))
+              idat = chunk(b'IDAT', zlib.compress(raw))
+              iend = chunk(b'IEND', b'')
+              return sig + ihdr + idat + iend
+
+          mipmap_sizes = {
+              'mipmap-mdpi': 48,
+              'mipmap-hdpi': 72,
+              'mipmap-xhdpi': 96,
+              'mipmap-xxhdpi': 144,
+              'mipmap-xxxhdpi': 192,
+          }
+          base = 'android/app/src/main/res'
+          for dir_name, size in mipmap_sizes.items():
+              path = f'{base}/{dir_name}'
+              os.makedirs(path, exist_ok=True)
+              png = create_png(size)
+              for name in ['ic_launcher.png', 'ic_launcher_round.png']:
+                  with open(f'{path}/{name}', 'wb') as f:
+                      f.write(png)
+          print('All mipmap icons generated successfully.')
+          EOF
+
+      # 6. Run Drift code generation
       - name: Generate Drift code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      # 6. Build release APK
+      # 7. Build release APK
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
 
-      # 7. Upload APK artifact
+      # 8. Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
