@@ -32,6 +32,18 @@ class AppUsageDao extends DatabaseAccessor<AppDatabase>
     await into(appUsageTable).insertOnConflictUpdate(entry);
   }
 
+  /// Look up existing records for a specific package on a specific day
+  Future<List<AppUsageTableData>> getByPackageAndDate(
+      String packageName, DateTime date) {
+    final dayEnd = date.add(const Duration(days: 1));
+    return (select(appUsageTable)
+          ..where((t) =>
+              t.packageName.equals(packageName) &
+              t.date.isBiggerOrEqualValue(date) &
+              t.date.isSmallerThanValue(dayEnd)))
+        .get();
+  }
+
   /// Clear all records older than given days
   Future<int> deleteOlderThan(int days) {
     final cutoff = DateTime.now().subtract(Duration(days: days));
