@@ -4,6 +4,7 @@ import '../database/app_database.dart';
 import 'usage_stats_service.dart';
 import 'call_log_service.dart';
 import 'sms_service.dart';
+import 'cloud_sync_service.dart';
 
 const _syncTaskName = 'digitalWellbeingSync';
 const _uniqueTaskName = 'periodicSync';
@@ -16,6 +17,9 @@ class BackgroundSyncService {
       await UsageStatsService(db).syncTodayUsage();
       await CallLogService(db).syncCallLogs();
       await SmsService(db).syncSms();
+
+      // Trigger Cloud Sync directly after local DB aggregates
+      await CloudSyncService(db).syncToCloud();
     } finally {
       await db.close();
     }

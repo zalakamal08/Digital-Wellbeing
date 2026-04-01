@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "450521400023",
+    "project_id": "digitalwellbeingtracker1001",
+    "storage_bucket": "digitalwellbeingtracker1001.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450521400023:android:b6d8a4d9df4e83a04ae692",
+        "android_client_info": {
+          "package_name": "com.digitalwellbeing.mydigitalwellbeing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL-lYPubljaj8AeqqEJww9JCxfU53kiYY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

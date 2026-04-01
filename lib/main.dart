@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:workmanager/workmanager.dart';
 import 'package:get_it/get_it.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'app.dart';
 import 'core/database/app_database.dart';
@@ -16,6 +17,7 @@ final GetIt getIt = GetIt.instance;
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
     try {
+      await Firebase.initializeApp(); // Required for background worker sync
       await BackgroundSyncService.runSync();
       return Future.value(true);
     } catch (e) {
@@ -26,6 +28,7 @@ void callbackDispatcher() {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   // ── Database ─────────────────────────────────────────────────────
   final db = AppDatabase();
