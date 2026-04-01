@@ -54,7 +54,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (mounted) context.go('/dashboard');
   }
 
-  bool get _canProceed => _phoneGranted && _smsGranted && _notifGranted;
+  // SMS is optional — app works without it
+  bool get _canProceed => _phoneGranted && _notifGranted;
 
   @override
   Widget build(BuildContext context) {
@@ -129,8 +130,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       const SizedBox(height: 12),
                       _PermissionTile(
                         icon: Icons.message_rounded,
-                        title: 'SMS Access',
-                        subtitle: 'Monitor SMS activity by contact',
+                        title: 'SMS Access (Optional)',
+                        subtitle: 'Monitor SMS — not required to proceed',
                         granted: _smsGranted,
                         color: Colors.blueAccent,
                       ),
