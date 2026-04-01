@@ -9,6 +9,18 @@ class SmsLogDao extends DatabaseAccessor<AppDatabase>
     with _$SmsLogDaoMixin {
   SmsLogDao(super.db);
 
+  static DateTime get _weekStart =>
+      DateTime.now().subtract(const Duration(days: 6));
+
+  /// All SMS from the last 7 days
+  Future<List<SmsLogTableData>> getWeekSms() {
+    return (select(smsLogTable)
+          ..where((t) => t.timestamp.isBiggerOrEqualValue(_weekStart))
+          ..orderBy([(t) => OrderingTerm.desc(t.timestamp)]))
+        .get();
+  }
+
+  /// All SMS logs ever stored
   Future<List<SmsLogTableData>> getAllSms() {
     return (select(smsLogTable)
           ..orderBy([(t) => OrderingTerm.desc(t.timestamp)]))
@@ -26,6 +38,14 @@ class SmsLogDao extends DatabaseAccessor<AppDatabase>
 
   Future<void> upsertSms(SmsLogTableCompanion entry) async {
     await into(smsLogTable).insertOnConflictUpdate(entry);
+  }
+
+  /// Delete records older than [days] days
+  Future<int> deleteOlderThan(int days) {
+    final cutoff = DateTime.now().subtract(Duration(days: days));
+    return (delete(smsLogTable)
+          ..where((t) => t.timestamp.isSmallerThanValue(cutoff)))
+        .go();
   }
 
   Future<int> getTodayCount() async {

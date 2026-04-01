@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 
 import '../database/app_database.dart';
 import '../database/daos/call_log_dao.dart';
+import 'usage_stats_service.dart'; // for kDataWindowDays
 
 class CallLogService {
   final AppDatabase _db;
@@ -11,10 +12,17 @@ class CallLogService {
 
   CallLogDao get _dao => _db.callLogDao;
 
-  /// Fetch last 7 days of call logs and upsert
+  /// Fetch call logs from the past [kDataWindowDays] days only and upsert.
+  /// Older records are pruned after sync.
   Future<void> syncCallLogs() async {
     try {
-      final entries = await CallLog.get();
+      final sevenDaysAgo = DateTime.now()
+          .subtract(Duration(days: kDataWindowDays))
+          .millisecondsSinceEpoch;
+
+      // call_log supports dateFrom filtering natively
+      final entries = await CallLog.query(dateFrom: sevenDaysAgo);
+
       for (final entry in entries) {
         if (entry.number == null) continue;
 
@@ -31,6 +39,9 @@ class CallLogService {
           timestamp: Value(timestamp),
         ));
       }
+
+      // Prune records older than the window
+      await _dao.deleteOlderThan(kDataWindowDays);
     } catch (e) {
       // Permission not granted
     }
@@ -49,7 +60,7 @@ class CallLogService {
     }
   }
 
-  Future<List<CallLogTableData>> getAllCalls() => _dao.getAllCalls();
+  Future<List<CallLogTableData>> getWeekCalls() => _dao.getWeekCalls();
   Future<List<CallLogTableData>> getTodayCalls() => _dao.getTodayCalls();
   Future<int> getTodayTotalDuration() => _dao.getTodayTotalDuration();
 }

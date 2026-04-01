@@ -9,17 +9,32 @@ class AppUsageDao extends DatabaseAccessor<AppDatabase>
     with _$AppUsageDaoMixin {
   AppUsageDao(super.db);
 
-  /// Get all usage records for a given date range, sorted by usage time descending
-  Future<List<AppUsageTableData>> getUsageForRange(
-      DateTime start, DateTime end) {
+  static DateTime get _weekStart {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day)
+        .subtract(const Duration(days: 6));
+  }
+
+  /// Gets usage records within the last 7 days
+  Future<List<AppUsageTableData>> getWeekUsage() {
+    final start = _weekStart;
+    final end = DateTime.now().add(const Duration(days: 1));
     return (select(appUsageTable)
-          ..where(
-              (t) => t.date.isBetweenValues(start, end))
+          ..where((t) => t.date.isBetweenValues(start, end))
           ..orderBy([(t) => OrderingTerm.desc(t.usageTimeMs)]))
         .get();
   }
 
-  /// Get usage for today
+  /// Get all usage records for a given date range, sorted by usage time descending
+  Future<List<AppUsageTableData>> getUsageForRange(
+      DateTime start, DateTime end) {
+    return (select(appUsageTable)
+          ..where((t) => t.date.isBetweenValues(start, end))
+          ..orderBy([(t) => OrderingTerm.desc(t.usageTimeMs)]))
+        .get();
+  }
+
+  /// Get usage for today only
   Future<List<AppUsageTableData>> getTodayUsage() {
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
@@ -44,7 +59,7 @@ class AppUsageDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
-  /// Clear all records older than given days
+  /// Delete records older than [days] days (keeps DB lean)
   Future<int> deleteOlderThan(int days) {
     final cutoff = DateTime.now().subtract(Duration(days: days));
     return (delete(appUsageTable)
@@ -55,6 +70,12 @@ class AppUsageDao extends DatabaseAccessor<AppDatabase>
   /// Total screen time in ms for today
   Future<int> getTodayTotalMs() async {
     final rows = await getTodayUsage();
+    return rows.fold<int>(0, (sum, r) => sum + r.usageTimeMs);
+  }
+
+  /// Total screen time in ms for the last 7 days
+  Future<int> getWeekTotalMs() async {
+    final rows = await getWeekUsage();
     return rows.fold<int>(0, (sum, r) => sum + r.usageTimeMs);
   }
 }
