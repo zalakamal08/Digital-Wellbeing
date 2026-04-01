@@ -31,7 +31,7 @@ class _AppUsageScreenState extends State<AppUsageScreen> {
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    await _service.syncTodayUsage();
+    await _service.syncWeekUsage();
 
     final now = DateTime.now();
     DateTime start;

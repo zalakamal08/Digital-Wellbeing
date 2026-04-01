@@ -28,7 +28,7 @@ class _CallsScreenState extends State<CallsScreen> {
   Future<void> _load() async {
     setState(() => _loading = true);
     await _service.syncCallLogs();
-    final calls = await _service.getAllCalls();
+    final calls = await _service.getWeekCalls();
     setState(() {
       _calls = calls;
       _loading = false;

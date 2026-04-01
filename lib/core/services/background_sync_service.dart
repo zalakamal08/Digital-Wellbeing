@@ -14,7 +14,7 @@ class BackgroundSyncService {
   static Future<void> runSync() async {
     final db = AppDatabase();
     try {
-      await UsageStatsService(db).syncTodayUsage();
+      await UsageStatsService(db).syncWeekUsage();
       await CallLogService(db).syncCallLogs();
       await SmsService(db).syncSms();
 

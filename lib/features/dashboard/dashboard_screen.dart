@@ -36,7 +36,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _load() async {
     setState(() => _loading = true);
-    await _usageService.syncTodayUsage();
+    await _usageService.syncWeekUsage();
     await _callService.syncCallLogs();
     await _smsService.syncSms();
 
