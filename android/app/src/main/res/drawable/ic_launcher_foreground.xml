@@ -4,18 +4,16 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Shield shape -->
+    <!-- Outer shield shape (white) -->
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M54,18 L82,30 L82,54 Q82,72 54,90 Q26,72 26,54 L26,30 Z" />
-    <!-- Inner shield detail -->
+    <!-- Inner shield fill (indigo) -->
     <path
         android:fillColor="#3F51B5"
         android:pathData="M54,28 L74,38 L74,54 Q74,67 54,80 Q34,67 34,54 L34,38 Z" />
-    <!-- White center dot -->
-    <circle
+    <!-- White center circle using arc path (cx=54, cy=52, r=8) -->
+    <path
         android:fillColor="#FFFFFF"
-        android:cx="54"
-        android:cy="52"
-        android:r="8" />
+        android:pathData="M46,52 A8,8,0,1,0,62,52 A8,8,0,1,0,46,52 Z" />
 </vector>
